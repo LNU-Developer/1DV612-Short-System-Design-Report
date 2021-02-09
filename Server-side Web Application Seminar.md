@@ -48,6 +48,10 @@ If there is a need for persistent data on the server-side, it should be describe
 ## **Data flow diagram**
 Please see the attached schemas around the dataflow.
 
+![High level data flow](HDataflow.PNG "High level data flow")
+
+![Low level data flow](LDataflow.PNG "Low level data flow")
+
 ## **KickAssPayoutsBackend**
 
 **Description**
@@ -56,6 +60,7 @@ A web API capable of persisting user preferences and user input to a MySQL datab
 
 **Frameworks and dependencies**
 <br/>
+ASP.Net Core will be used as a web application framework in order to easily handle the creation and usage of APIs.
 In order to satisfy an easy way of communicating with the MySQL database the Microsoft.EntityFrameworkCore has been choosen as a serve-side framework. Entity Framework (EF) Core is a lightweight, extensible, open source and cross-platform version of Entity Framework data access technology. EF Core can serve as an object-relational mapper (O/RM).
 - Enables .NET developers to work with a database using .NET objects.
 - Eliminates the need for most of the data-access code that typically needs to be written.
@@ -65,6 +70,7 @@ A project SDK, Microsoft.NET.Sdk.Web, is used for easy build and deployment as a
 **Persistent data**
 <br/>
 The value of this application comes through the consistant value of current data which only few people can access through a computer backend. In order to support user preference as well as the added value of data history a database is needed to persist data. For this project a MySQL database has been selected as a database. Please see the attached database schema around how the database should be structured.
+![Database schema](Database.PNG "Database schema")
 
 ## **swArenaApi**
 **Description**
