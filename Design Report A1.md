@@ -22,17 +22,50 @@ In order to help player base as much as possible a Discord bot was created, call
 
 ![Overall structure of the application](DesignReportOverviewOverApplication.PNG "Overall structure of the application")
 
-The application consist of four different virtual machines hosted on my own dedicated server that are communicating with each other in different ways. In its core an MVC architectural pattern has been choosen clearly seperating different virtual machines into either Model/Controller or View. A sense of event-driven architecture can also be seen since the backend (KickAssBackend) is suppose to communicate with primarily the discord view through a websocket, telling the application when to communicate either through editing a shard payout message or direct messaging a user that their rank has dropped. Secondly a website will be created where users can login through Discord OAuth and see all shards/servers that they have access to. Finally the application communicating with the game server (swArenaApi) can be seen as a microservice, as its sole purpose is to fetch data from the game server based on input, and it has a very standardized way of doing so (through websockets).
-
-## Frontend
-
-## Backend
-### **Data flow diagram**
-Please see the attached schemas around the dataflow.
+The application consist of four different virtual machines hosted on my own dedicated server that are communicating with each other in different ways. In its core an MVC architectural pattern has been choosen clearly seperating different virtual machines into either Model/Controller or View. A sense of event-driven architecture can also be seen since the backend (KickAssBackend) is suppose to communicate with primarily the discord view through a websocket, telling the application when to communicate either through editing a shard payout message or direct messaging a user that their rank has dropped. Secondly a website will be created where users can login through Discord OAuth and see all shards/servers that they have access to. Finally the application communicating with the game server (swArenaApi) can be seen as a microservice, as its sole purpose is to fetch data from the game server based on input, and it has a very standardized way of doing so (through websockets). Please see the below high level dataflow overview showing this.
 
 ![High level data flow](HDataflow.PNG "High level data flow")
 
-![Low level data flow](LDataflow.PNG "Low level data flow")
+## Frontend
+The frontend consist of two different areas, one discord interface, where the user can login through the discord application, invite the KickAssPayoutsBot to their server and set up the bot to provide the data that is requested. Secondly a React.JS application is used to allow the user to login through Discord OAuth to show the same information as prodvided in the discord application.
+
+The different views are communicating with the backend through web APIs and websockets as per the below endpoints (please see below under the backend section). Below an illustration of the frontend application can be shown.
+
+![Frontend flows](FrontendFlows.PNG "Frontend flows")
+
+### Discord flow
+
+**Description**
+<br/>
+A bot is created in Node.JS using the popular Discord.JS framework, which is wrapping Discords own APIs to communicate to Discord easily (e.g. sending messages, receive and interpet messages etc). By creating a discord bot I can simulate a user that can communicate just like any other person. The focus of the application will lie in this part of the frontend.
+
+**Frameworks and dependencies**
+<br/>
+Discord.JS will be used to easily handle discords complex API structure and to easily create a bot that can listen to and act upon commands of the user.
+
+**Explaining the Discord View flow**
+1. The user logs into the application in Discord to identify itself as a specific user.
+2. The user invites the bot using and invite link to its server to be able to communicate with the bot.
+3. The user sets up the bot by entering different commands, like creating shards, adding users opting in for direct messages etc. The bot would listen for certain commands and send requests through to the backend using a rest API where data would be stored/processed to set up the bot for that specific shards purpose.
+4. The bot is connected to the backend through a websocket and receives messages whenever it needs to act (e.g. update a message or send a direct message to a user).
+
+### Webbrowser flow
+**Description**
+<br/>
+A webpage is created using the popular React.JS framework to create a SPA application. The user is supposed to login using Discords OAuth service and by doing this information is sent to backend on which servers the user has access to (in order to show the correct shards that has been created through Discord). The webpage will not be focused on in this project, but rather demonstrating the important and powerful OAuth technology.
+
+**Frameworks and dependencies**
+<br/>
+As mentioned above React.JS will be used to create a simple SPA application.
+
+**Explaining the Webpage View flow**
+1. The user accesses the webpage.
+2. The user logs in through Discord OAuth.
+3. The user is displayed all shards and the current payout information for these shards.
+
+## Backend
+
+![Backend flows](BackendFlows.PNG "Backend flows")
 
 ### **KickAssPayoutsBackend**
 
@@ -55,7 +88,6 @@ The value of this application comes through the consistant polling of current da
 **API**
 <br/>
 The value of this application comes through the consistant polling of current data which only few people can access through a computer backend. In order to support user preference as well as the added value of data history a database is needed to persist data. For this project a MySQL database has been selected as a database. Please see the attached database schema around how the database should be structured.
-![Database schema](Database.PNG "Database schema")
 
 ### **swArenaApi**
 **Description**
@@ -67,3 +99,8 @@ An application built in Node.JS able to communicate with the Star Wars Galaxy of
 In order to serilize and deserilize requests from and to the games servers the protobufjs framework is used to translate data structures into readable JSON objects.
 As mentioned above the application is wrapped around a websocket, as such the ws dependency is used.
 To create make calls to the games RPC node-fetch has been chosen as a dependency.
+
+### **Data flow diagram**
+Please see the attached schemas around the dataflow.
+
+![Low level data flow](LDataflow.PNG "Low level data flow")
