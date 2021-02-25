@@ -1,1 +1,1 @@
-[**Design Report A1**](Design-Report-A1)
+[**Short System Design Spec**](Short-System-Design-Spec)
