@@ -1,6 +1,6 @@
-<mxfile host="65bd71144e" modified="2021-02-22T15:37:03.717Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.53.2 Chrome/87.0.4280.141 Electron/11.2.1 Safari/537.36" etag="GjVsoLOrv252O-0J_Mzi" version="14.2.4" type="embed">
+<mxfile host="65bd71144e" modified="2021-02-25T17:52:49.485Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.53.2 Chrome/87.0.4280.141 Electron/11.2.1 Safari/537.36" etag="Qrlcupc91rFyw2Ip8_pg" version="14.2.4" type="embed">
     <diagram id="dDb8Qz8hALOer5EJykmB" name="Page-1">
-        <mxGraphModel dx="2545" dy="1584" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1576" dy="2091" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -109,13 +109,13 @@
                 <mxCell id="406" value="payoutLayout" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;" parent="404" vertex="1">
                     <mxGeometry x="140" width="140" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="459" value="" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;top=0;left=0;bottom=0;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="28">
+                <mxCell id="459" value="" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;top=0;left=0;bottom=0;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="28" vertex="1">
                     <mxGeometry y="150" width="280" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="460" value="FK_shardHistory" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;editable=1;overflow=hidden;" vertex="1" parent="459">
+                <mxCell id="460" value="FK_shardHistory" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;editable=1;overflow=hidden;" parent="459" vertex="1">
                     <mxGeometry width="140" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="461" value="shardHistoryId" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;" vertex="1" parent="459">
+                <mxCell id="461" value="shardHistoryId" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;" parent="459" vertex="1">
                     <mxGeometry x="140" width="140" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="50" value="shardMembers" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
@@ -176,7 +176,7 @@
                     <mxGeometry x="80" width="135" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="94" value="discordUser" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" parent="1" vertex="1">
-                    <mxGeometry x="467" y="-288" width="200" height="160" as="geometry"/>
+                    <mxGeometry x="368" y="-3" width="200" height="160" as="geometry"/>
                 </mxCell>
                 <mxCell id="95" value="" style="shape=partialRectangle;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;top=0;left=0;bottom=1;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="94" vertex="1">
                     <mxGeometry y="30" width="200" height="50" as="geometry"/>

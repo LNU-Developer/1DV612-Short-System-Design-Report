@@ -1,4 +1,4 @@
-<img src="BD-1-AG.png" width="200">
+<img src="Pictures/BD-1-AG.png" width="200">
 
 # KickAssProject
 
@@ -16,28 +16,42 @@ Since the beginning Discord has been the main communication method for these sha
 ### How to help the player base
 In order to help player base as much as possible a Discord bot was created, called "KickAss Payouts Bot", expanding upon the reverse-engineered solution, which was supposed to show live payouts data (updating every other minute) as well as direct message users whenever they lose rank in-game. Due to the author being junior at the time the solution might not have been the best one from both an architectural standpoint but also code quality. There are many other features to the original bot, but these two (Live Payout Data and DM on drop) the areas in scope for this course. The below pictures illustrates how the bot is functioning today where a message is updated for each shard chat to illustrate live payout data and a direct message is sent to a user on drop.
 
-![Payout](KickAssPayoutBotPayout.PNG "Payout") ![DM](KickAssPayoutBotDm.PNG "DM")
+![Payout](Pictures/KickAssPayoutBotPayout.PNG "Payout") ![DM](Pictures/KickAssPayoutBotDm.PNG "DM")
 ## Architectural patterns
 There are a lot to think about when deciding which architecture pattern to use for an application. Most of the time it would be recomendet to go for one of the predefined [Architecture Patterns](Architecture-Patterns), since not doing so could easily lead to the use of one of the well know anti-patterns (e.g. BBoM, or "Big Ball of Mud") [1].
 
-Research was made, [here](Architecture-Patterns), around the different predefined patterns that can be used as well as the pros and cons of using these patterns. Looking at the needs of my application I quickly fell for the **layerd based design** toppled of with some **event-driven aspects** as well as one part of the application being a **microservice**. This was due to the challenges faced when building this application as a monolith. Some of the experienced problems were the fact that I had to poll the backend when to send a message and everything was beginning from the frontend in this aspect instead of originating from the backend.
+Research was made, around the different predefined patterns that can be used as well as the pros and cons of using these patterns. Looking at the needs of my application I quickly fell for the **layerd based design** toppled of with some **event-driven aspects** as well as one part of the application being a **microservice**. This was due to the challenges faced when building this application as a monolith. Some of the experienced problems were the fact that I had to poll the backend when to send a message and everything was beginning from the frontend in this aspect instead of originating from the backend.
 
 By clearly seperating the application into layers (e.g. bot being the view and backend being a model/controller), I feel that the application has a better structure and divided responsibility. This will make the different parts smaller and easier to handle and debug [2]. I also like the fact that I would be able to avoid polling by instead opting for a more event-drive design [3]. I was planning to solve this through a websocket where the bot would connect to the backend and receive messages whenever it is suppose to act. This could be seen as a simplified handling of the observer pattern [3]. A few areas of the application cant avoid the polling scenario, this is due to the fact that there is no way to receive info on an event-basis from the game servers. The microservice that pulls game data will do this through the use of polling and keeping data up to date in the database, so whenever data is requested it is pulled from the database containing fresh data.
 
 ## Overall structure of the application
 
-![Overall structure of the application](DesignReportOverviewOverApplication.PNG "Overall structure of the application")
+Below a picture of the overall structure of the application can be shown where the first two "boxes" are the frontend that are communicating in different ways with the two back "boxes" as the backend.
 
-The application will consist of four different virtual machines hosted on my own dedicated server that are communicating with each other in different ways. In its core an MVC architectural pattern has been choosen clearly seperating different virtual machines into either Model/Controller or View. A sense of event-driven architecture can also be seen since the backend (KickAssBackend) is suppose to communicate with primarily the discord view through a websocket, telling the application when to communicate either through editing a shard payout message or direct messaging a user that their rank has dropped. Secondly a website will be created where users can login through Discord OAuth and see all shards/servers that they have access to. Finally the application communicating with the game server (swArenaApi) can be seen as a microservice, as its sole purpose is to fetch data from the game server based on input, and it has a very standardized way of doing so (through websockets). Please see the below high level dataflow overview showing this.
+![Overall structure of the application](Pictures/DesignReportOverviewOverApplication.PNG "Overall structure of the application")
 
-![High level data flow](HDataflow.PNG "High level data flow")
+1. The application will consist of four different virtual machines hosted on my own dedicated server that are communicating with each other in different ways.
+2. In its core an MVC architectural pattern has been choosen clearly seperating different virtual machines into either Model/Controller or View.
+3. A sense of event-driven architecture can also be seen since the backend (KickAssBackend) is suppose to communicate with primarily the discord view through a websocket, telling the application when to communicate either through editing a shard payout message or direct messaging a user that their rank has dropped.
+4. Secondly a website will be created where users can login through Discord OAuth and see all shards/servers that they have access to.
+5. Finally the application communicating with the game server (swArenaApi) can be seen as a microservice, as its sole purpose is to fetch data from the game server based on input, and it has a very standardized way of doing so (through websockets).
+
+Please see the below high level dataflow overview showing this.
+
+![High level data flow](Pictures/HDataflow.PNG "High level data flow")
+
+This pretty much sums up how the user interacts with the application on a very high level.
+
+1. User interacts with frontend.
+2. Game data gets added from the game servers.
+3. Data gets pushed/pulled to/from the database.
 
 ## Frontend
 The frontend consist of two different areas, one discord interface, where the user can login through the discord application, invite the KickAssPayoutsBot to their server and set up the bot to provide the data that is requested. Secondly a React.JS application is used to allow the user to login through Discord OAuth to show the same information as prodvided in the discord application.
 
 The different views are communicating with the backend through web APIs and websockets as per the below endpoints (please see below under the backend section). Below an illustration of the frontend application can be shown.
 
-![Frontend flows](FrontendFlows.PNG "Frontend flows")
+![Frontend flows](Pictures/FrontendFlows.PNG "Frontend flows")
 
 ### **Discord**
 
@@ -48,10 +62,16 @@ A bot is created in Node.JS using the popular Discord.JS framework, which is wra
 Discord.JS will be used to easily handle discords complex API structure and to easily create a bot that can listen to and act upon commands of the user.
 
 #### Explaining the Discord View flow
-1. The user logs into the application in Discord to identify itself as a specific user.
-2. The user invites the bot using and invite link to its server to be able to communicate with the bot.
+1. The user logs into the application in Discord to identify itself as a specific user.<br>
+![DiscordLogin](Pictures/DiscordLogin.PNG "DiscordLogin")
+
+2. The user invites the bot using and invite link to its server to be able to communicate with the bot.<br>
+![KickAssInvite](Pictures/KickAssInvite.png "KickAssInvite")
+
 3. The user sets up the bot by entering different commands, like creating shards, adding users opting in for direct messages etc. The bot would listen for certain commands and send requests through to the backend using a rest API where data would be stored/processed to set up the bot for that specific shards purpose (see below).
+![KickAssCommands](Pictures/KickAssCommands.png "KickAssCommands")
 4. The bot is connected to the backend through a websocket and receives messages whenever it needs to act (e.g. update a message or send a direct message to a user) (see below).
+![KickAssDMs](Pictures/KickAssDMs.png "KickAssDMs")
 
 #### Bot commands
 In order to receive and update data to the backend commands are typed by the user which will trigger different rest API requests.
@@ -79,6 +99,20 @@ The following endpoints will be used by the bot in connection to the websocket.
 #### Description
 A webpage is created using the popular React.JS framework to create a SPA application. The user is supposed to login using Discords OAuth service  and by doing this information is sent to backend on which servers the user has access to (in order to show the correct shards that has been created through Discord). The webpage will not be focused on in this project, but rather demonstrating the important and powerful OAuth technology [4].
 
+#### OAuth
+OAuth is a very powerful way of providing clients with secure access to the user resources on a service provider [5]. It basically allows access management to be handled by another known provider (e.g. Google, Facebook or in this case Discord). The flow is explained below of the well known Authorization Flow Grant [5].
+
+![OAuth](Pictures/OAuth.PNG "OAuth")
+
+Picture from [6].
+
+1. The first step would be that the client requests authorization from the resource owner (through e.g. providing a link on a homepage that will take the user to the providers login page).
+2. After successfully logging in the client receives an authorization grant code from the URI.
+3. The client requests an access token by performing a POST request with the help of the authorization server and authorization grant provision. The settings when setting up the OAuth decided on the access that is provided, and this is also shown to the user in step 1.
+4. The authorization server verifies the client by checking the authorization grant code and, if it’s valid, issues an access token and refresh token as a response to the POST request.
+5. The client requests a secure resource (e.g. GET/POST request) from the provider and authenticates by presenting the access token in the header of the request.
+6. The provider checks the access token and, if valid, serves the request.
+
 #### Frameworks and dependencies
 
 As mentioned above React.JS will be used to create a simple SPA application.
@@ -90,7 +124,7 @@ As mentioned above React.JS will be used to create a simple SPA application.
 
 ## Backend
 
-![Backend flows](BackendFlows.PNG "Backend flows")
+![Backend flows](Pictures/BackendFlows.PNG "Backend flows")
 
 ### **KickAssPayoutsBackend**
 
@@ -99,8 +133,8 @@ A web API capable of persisting user preferences and user input to a MySQL datab
 
 #### Frameworks and dependencies
 ASP.Net Core will be used as a web application framework in order to easily handle the creation and usage of APIs.
-In order to satisfy an easy way of communicating with the MySQL database the MySQLConnector package has been choosen as a serve-side framework [5].
-To create on the fly documentation around the web API created Swashbuckle.AspNetCore will be used. Swashbuckle is an open source project for generating Swagger documents for Web APIs that are built with ASP.NET Core [6].
+In order to satisfy an easy way of communicating with the MySQL database the MySQLConnector package has been choosen as a serve-side framework [7].
+To create on the fly documentation around the web API created Swashbuckle.AspNetCore will be used. Swashbuckle is an open source project for generating Swagger documents for Web APIs that are built with ASP.NET Core [8].
 A project SDK, Microsoft.NET.Sdk.Web, is used for easy build and deployment as a dotnet webapp.
 
 #### API
@@ -121,8 +155,13 @@ The backend has a few endpoints to handle the users request to add/remove and up
 | WebSocket | /websockets | GET | Connect to the websocket server |
 
 #### Persistent data
-The value of this application comes through the consistant polling of current data which only few people can access through a computer backend. In order to support user preference as well as the added value of data history a database is needed to persist data. For this project a MySQL database has been selected as a database. Please see the attached database schema around how the database should be structured.
-![Database schema](Database.PNG "Database schema")
+The value of this application comes through the consistant polling of current data which only few people can access through a computer backend. In order to support user preference as well as the added value of data history a database is needed to persist data. For this project a MySQL database has been selected as a database. Please see the attached database schema around how the database should be structured, as well as an explaination on the most important attributes.
+![Database schema](Pictures/Database.PNG "Database schema")
+
+1. There can be many different shards containing data like shard type, shardServerId (in this case which discord server it is) as well as shardId (which discord channel it is on that server). The discord channel was chosen as a primary key since this is unique and would enable the user to create as many shards as there are channels on the specific discord server. There is a downside of structuring the data using discord, since I am dependent on the user using discord, however this can be overcome by providing similar IDs structures when the user doesnt have a discord account. The discord channel IDs are unique accross the whole of discord, so there is no possibility of duplications.
+2. The shard can contain shardmembers which contains information around if the member is a friend or enemy as well as a reference to a player. The primary key is an auto incremental number that increases by one each time a member is added.
+3. The shard meembers are also players which contain the in game information fetched from the game server. The primary key playerId is a combination of the shardid and allycode making each playerId unique.
+4. Lastly there are two tables showing rank/hit history. Since I want to keep track on the who hit whom I need the shardhistory table to provide that data. I also want to know the ranks of different players so the bot needs to message users when this is to happen.
 
 ### **swArenaApi**
 #### Description
@@ -144,6 +183,10 @@ https://medium.com/better-programming/understanding-the-observer-design-pattern-
 
 [4] A Simple Way to Understand OAuth, Chameera Dulanga, 26 Jun 2020, https://medium.com/better-programming/a-simple-way-to-understand-oauth-169d49e0b328 (accessed Feb. 20, 2021).
 
-[5] https://mysqlconnector.net/ (accessed Feb. 20, 2021).
+[5] https://tools.ietf.org/html/rfc6749#section-1.3.1 (accessed Feb. 20, 2021).
 
-[6] https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/README.md (accessed Feb. 20, 2021).
+[6] Oauth 2.0 Basic Understanding, Oleksii Andrukhanenko, 17 March, 2020, https://stfalcon.com/en/blog/post/oauth-2.0 (accessed Feb. 20, 2021).
+
+[7] https://mysqlconnector.net/ (accessed Feb. 20, 2021).
+
+[8] https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/README.md (accessed Feb. 20, 2021).
