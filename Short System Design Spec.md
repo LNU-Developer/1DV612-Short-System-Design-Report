@@ -63,14 +63,18 @@ Discord.JS will be used to easily handle discords complex API structure and to e
 
 #### Explaining the Discord View flow
 1. The user logs into the application in Discord to identify itself as a specific user.<br>
+
 ![DiscordLogin](Pictures/DiscordLogin.png "DiscordLogin")
 
 2. The user invites the bot using and invite link to its server to be able to communicate with the bot.<br>
+
 ![KickAssInvite](Pictures/KickAssInvite.png "KickAssInvite")
 
 3. The user sets up the bot by entering different commands, like creating shards, adding users opting in for direct messages etc. The bot would listen for certain commands and send requests through to the backend using a rest API where data would be stored/processed to set up the bot for that specific shards purpose (see below).
+
 ![KickAssCommands](Pictures/KickAssCommands.PNG "KickAssCommands")
-4. The bot is connected to the backend through a websocket and receives messages whenever it needs to act (e.g. update a message or send a direct message to a user) (see below).
+1. The bot is connected to the backend through a websocket and receives messages whenever it needs to act (e.g. update a message or send a direct message to a user) (see below).
+
 ![KickAssDMs](Pictures/KickAssDMs.PNG "KickAssDMs")
 
 #### Bot commands
