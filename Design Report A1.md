@@ -102,7 +102,7 @@ A webpage is created using the popular React.JS framework to create a SPA applic
 #### OAuth
 OAuth is a very powerful way of providing clients with secure access to the user resources on a service provider [5]. It basically allows access management to be handled by another known provider (e.g. Google, Facebook or in this case Discord). The flow is explained below of the well known Authorization Flow Grant [5].
 
-![OAuth](Pictures/OAuth.PNG "OAuth")
+![OAuth](Pictures/OAuth.png "OAuth")
 
 Picture from [6].
 
