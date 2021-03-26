@@ -80,22 +80,22 @@ Discord.JS will be used to easily handle discords complex API structure and to e
 #### Bot commands
 In order to receive and update data to the backend commands are typed by the user which will trigger different rest API requests.
 
-| Command | Triggers endpoint | Method | Description | Example |
-|----------|----------|----------|----------|----------|
-| !createshard "type" "#shardname" | /shards/create | POST | Create a new shard | !createshard ARENA #payouts |
-| !changeshardtype "#shardname" "type" | /shards/change | PUT | Change shard type | !changeshardtype #payouts FLEET |
-| !removeshard "#shardname" | /shards | DELETE | Delete a shard with a specific ID | !removeshard #payouts |
-| !add "allycode" "#shardname" | /players/add | POST | Add a new player to a specific shard | !add 123123123 #payouts |
-| !remove "allycode" "#shardname"  | /players | DELETE | Delete a player from a specific shard | !remove 123123123 #payouts |
+| Command                              | Triggers endpoint | Method | Description                           | Example                         |
+| ------------------------------------ | ----------------- | ------ | ------------------------------------- | ------------------------------- |
+| !createshard "type" "#shardname"     | /shards/create    | POST   | Create a new shard                    | !createshard ARENA #payouts     |
+| !changeshardtype "#shardname" "type" | /shards/change    | PUT    | Change shard type                     | !changeshardtype #payouts FLEET |
+| !removeshard "#shardname"            | /shards           | DELETE | Delete a shard with a specific ID     | !removeshard #payouts           |
+| !add "allycode" "#shardname"         | /players/add      | POST   | Add a new player to a specific shard  | !add 123123123 #payouts         |
+| !remove "allycode" "#shardname"      | /players          | DELETE | Delete a player from a specific shard | !remove 123123123 #payouts      |
 
 #### Websocket purpose
 The event-driven architecture comes from the backend telling the frontend when to perform different actions. The bot will from start be connected through the /websocket endpoint (see below under API) to the backend via websocket and listen from different events. In order for minimal data to be sent over the websocket only the event type and enough data to perform an REST API request will be sent, but the bot is instructed to perform get requests to receive the data needed to perform the send/direct message action.
 
 The following endpoints will be used by the bot in connection to the websocket.
-| Component | Endpoint | Method | Description |
-|----------|----------|----------|----------|
-| Shards | /shards/{id} | GET | Fetch shard information for a specific ID |
-| Players | /players/{id}/history | GET | Fetch rank history from a specific player |
+| Component | Endpoint              | Method | Description                               |
+| --------- | --------------------- | ------ | ----------------------------------------- |
+| Shards    | /shards/{id}          | GET    | Fetch shard information for a specific ID |
+| Players   | /players/{id}/history | GET    | Fetch rank history from a specific player |
 
 
 
@@ -144,19 +144,19 @@ A project SDK, Microsoft.NET.Sdk.Web, is used for easy build and deployment as a
 #### API
 The backend has a few endpoints to handle the users request to add/remove and update data.
 
-| Component | Endpoint | Method | Description |
-|----------|----------|----------|----------|
-| Oauth | /discord-login | GET   | User login through a redirect to Discord login |
-| Oauth | /discord-redirect | GET | Callback redirect after login |
-| Shards | /shards | GET | Fetch all shard information |
-| Shards | /shards/{id} | GET | Fetch shard information for a specific ID |
-| Shards | /shards/create | POST | Create a new shard |
-| Shards | /shards/change | PUT | Change shard type |
-| Shards | /shards | DELETE | Delete a shard with a specific ID |
-| Players | /players/{id}/history | GET | Fetch rank history from a specific player |
-| Players | /players/add | POST | Add a new player to a specific shard |
-| Players | /players | DELETE | Delete a player from a specific shard |
-| WebSocket | /websockets | GET | Connect to the websocket server |
+| Component | Endpoint              | Method | Description                                    |
+| --------- | --------------------- | ------ | ---------------------------------------------- |
+| Oauth     | /discord-login        | GET    | User login through a redirect to Discord login |
+| Oauth     | /discord-redirect     | GET    | Callback redirect after login                  |
+| Shards    | /shards               | GET    | Fetch all shard information                    |
+| Shards    | /shards/{id}          | GET    | Fetch shard information for a specific ID      |
+| Shards    | /shards/create        | POST   | Create a new shard                             |
+| Shards    | /shards/change        | PUT    | Change shard type                              |
+| Shards    | /shards               | DELETE | Delete a shard with a specific ID              |
+| Players   | /players/{id}/history | GET    | Fetch rank history from a specific player      |
+| Players   | /players/add          | POST   | Add a new player to a specific shard           |
+| Players   | /players              | DELETE | Delete a player from a specific shard          |
+| WebSocket | /websockets           | GET    | Connect to the websocket server                |
 
 #### Persistent data
 The value of this application comes through the consistant polling of current data which only few people can access through a computer backend. In order to support user preference as well as the added value of data history a database is needed to persist data. For this project a MySQL database has been selected as a database. Please see the attached database schema around how the database should be structured, as well as an explaination on the most important attributes.
@@ -175,6 +175,42 @@ An application built in Node.JS able to communicate with the Star Wars Galaxy of
 In order to serilize and deserilize requests from and to the games servers the protobufjs framework is used to translate data structures into readable JSON objects.
 As mentioned above the application is wrapped around a websocket, as such the ws dependency is used.
 To create make calls to the games RPC node-fetch has been chosen as a dependency.
+
+## Post-implementation reflection
+There was one major change to the plan above - the KickAssPayoutsRankWorker. When reading up on the different project templates that existed for C# and DotnetCore I stumbled upon the [**worker service**](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio) template - a perfect usercase for any background processing.
+
+Since one part of the KickAssPayoutsBackend was planned to be a polling service to fetch and update rankdata on a timely basis (a minute at most) I saw a potential way to break up my project into smaller and more specialized pieces by implementing a service worker to handle these parts of the application.
+
+The implementation worked perfectly, but required access to both the websocket server in the backend (to communicate event driven to the KickAssPayoutsBot) as well as the swArenaApi. A through I had was to further break up the application by creating a websocket server that only handled the service of relying messages. Due to time contstraints this was not implemented.
+
+Few other areas were changed. But smaller changes were made to both the API and the database model as illustraded below.
+
+### API
+Primarily a few more endpoints were created to satisfy the need for new data or to change the data that was not foreseen when writing the original system design specification.
+
+| Component | Endpoint                  | Method | Description                                              |
+| --------- | ------------------------- | ------ | -------------------------------------------------------- |
+| Discord   | /loginurl                 | GET    | Receive the login url to redirect to discord             |
+| Discord   | /eschangecode             | GET    | Exchange code to receive access token                    |
+| Discord   | /servers                  | GET    | Get all servers the logged in user has access to         |
+| Shards    | /shards                   | GET    | Fetch all shard information                              |
+| Shards    | /shards/{shardId}         | GET    | Fetch shard information for a specific ID                |
+| Shards    | /shards/create            | POST   | Create a new shard                                       |
+| Shards    | /shards/change-shard      | PUT    | Change shard type                                        |
+| Shards    | /shards/change-message-id | PUT    | Change the id of the message to be updated               |
+| Shards    | /shards/list              | POST   | Receive all shards based on an input array of server ids |
+| Players   | /players/change           | PUT    | Update the discord ID to receive direct messages         |
+| Players   | /players/add              | POST   | Add a new player to a specific shard                     |
+| Players   | /players                  | DELETE | Delete a player from a specific shard                    |
+| WebSocket | /ws                       | GET    | Connect to the websocket server                          |
+
+
+### Database model
+The database model was simplified to since it was to complex for the scope of the assignment. Furthermore a view was created that has not been illustrated above in order to simplify access to needed data. When continuing the work, I will probably only develop different views and not focus on querying different tables since this would simplify changes to the application even more.
+
+![PostImplDiagram](Pictures/PostImplDiagram.PNG "PostImplDiagram")
+
+
 
 ## References
 [1] The Big Ball of Mud and Other Architectural Disasters, Jeff Atwood, 26 Nov. 2007,  https://blog.codinghorror.com/the-big-ball-of-mud-and-other-architectural-disasters/
