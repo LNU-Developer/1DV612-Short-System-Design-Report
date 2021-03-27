@@ -205,6 +205,19 @@ Primarily a few more endpoints were created to satisfy the need for new data or 
 | WebSocket | /ws                       | GET    | Connect to the websocket server                          |
 
 
+### Bot commands
+
+Some minor changes to the possible bot commands were made.
+
+| Command                                         | Triggers endpoint | Method | Description                                      | Example                          |
+| ----------------------------------------------- | ----------------- | ------ | ------------------------------------------------ | -------------------------------- |
+| !createshard "type" "#shardname"                | /shards/create    | POST   | Create a new shard                               | !createshard SQUAD #payouts      |
+| !add "allycode" "#shardname"                    | /players/add      | POST   | Add a new player as a friend to a specific shard | !add 123123123 #payouts          |
+| !addenemy "allycode" "#shardname"               | /players/add      | POST   | Add a new player as an enemy to a specific shard | !addenemy 123123123 #payouts     |
+| !remove "allycode" "#shardname"                 | /players          | DELETE | Delete a player from a specific shard            | !remove 123123123 #payouts       |
+| !dmsnipe "#shardname" "allycode" "@discorduser" | /players/change   | PUT    | Delete a player from a specific shard            | !dmsnipe #payouts 123123123 @rmc |
+
+
 ### Database model
 The database model was simplified to since it was to complex for the scope of the assignment. Furthermore a view was created that has not been illustrated above in order to simplify access to needed data. When continuing the work, I will probably only develop different views and not focus on querying different tables since this would simplify changes to the application even more.
 
